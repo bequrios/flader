@@ -11,17 +11,27 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="btn-group btn-group-margin" role="group" aria-label="Basic example">
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod' }}">
+    <div class="btn-group btn-group-margin" role="group" aria-label="env">
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod&dir=' + dir }}">
             <button type="button" class="btn btn-secondary {% if env == 'prod' %}active{% endif %}">PROD</button>
         </a>
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int' }}">
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int&dir=' + dir }}">
             <button type="button" class="btn btn-secondary {% if env == 'int' %}active{% endif %}">INT</button>
         </a>
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test' }}">
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test&dir=' + dir }}">
             <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
         </a>
     </div>
+
+    <div class="btn-group btn-group-margin" role="group" aria-label="dir">
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&dir=nominal' }}">
+            <button type="button" class="btn btn-secondary {% if dir == 'nominal' %}active{% endif %}">nominal</button>
+        </a>
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&dir=reverse' }}">
+            <button type="button" class="btn btn-secondary {% if dir == 'reverse' %}active{% endif %}">reverse</button>
+        </a>
+    </div>
+
     <table class="table table-striped">
         <tr>
             <td>{{ uri }}</td>

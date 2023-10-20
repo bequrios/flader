@@ -65,12 +65,12 @@ def index():
         # replace NA values by empty strings
         df.fillna("", inplace = True) 
 
-        df = df.map(lambda x: linker(x, env))
+        df = df.map(lambda x: linker(x, env, dir))
         df = df.map(lambda x: Markup(x))
 
         col_names = df.columns.tolist()
 
-        return render_template('dataframe.html', data=df, uri=uri, env=env, col_names=col_names)
+        return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, col_names=col_names)
 
     else:
         print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")
@@ -78,7 +78,7 @@ def index():
 
     
 
-def linker(input_string, env):
+def linker(input_string, env, dir):
 
     # geo.ld.admin.ch and schema.ld.admin.ch are nor regularly dereferenced
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
@@ -88,7 +88,7 @@ def linker(input_string, env):
     pattern = r'^https://[^/]+\.ld\.admin\.ch'
     
     if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string):
-        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "'>" + input_string + "</a>"
+        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&dir=" + dir + "'>" + input_string + "</a>"
     
     # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
