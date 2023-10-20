@@ -8,9 +8,10 @@ import re
 app = Flask(__name__)
 
 
-@app.route('/<path:custom_path>')
-def arbitrary_path_route(custom_path):
+@app.route('/')
+def index():
     
+    uri = request.args.get("uri", "https://ld.admin.ch/country/CHE")
     env = request.args.get("env", "prod")
     dir = request.args.get("dir", "nominal")
     
@@ -21,7 +22,7 @@ def arbitrary_path_route(custom_path):
         sparql_query = """
 
         SELECT * WHERE {
-            ?subject ?predicate <https://""" + custom_path + """>.
+            ?subject ?predicate <""" + uri + """>.
         }
 
         """
@@ -32,7 +33,7 @@ def arbitrary_path_route(custom_path):
         sparql_query = """
 
         SELECT * WHERE {
-            <https://""" + custom_path + """> ?predicate ?object.
+            <""" + uri + """> ?predicate ?object.
         }
 
         """
@@ -69,11 +70,11 @@ def arbitrary_path_route(custom_path):
 
         col_names = df.columns.tolist()
 
-        return render_template('dataframe.html', data=df, subject=custom_path, env=env, col_names=col_names)
+        return render_template('dataframe.html', data=df, subject=uri, env=env, col_names=col_names)
 
     else:
         print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")
-        return render_template('template.html', custom_path=custom_path)
+        return render_template('template.html', uri=uri)
 
     
 
@@ -81,30 +82,11 @@ def linker(input_string, env):
 
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
         return "<a href='" + input_string + "'>" + input_string + "</a>"
-
-    # Define the pattern you want to match
-    pattern = r"https://(.*?\.ld\.admin\.ch)"
-
-    # Define the replacement string
-    replacement = r"https://flader.di.digisus-lab.ch/\1"
-
-    # Use re.sub to perform the replacement
-    result = re.sub(pattern, replacement, input_string)
-
-    if result != input_string:
-        return "<a href='" + result + "?env=" + env + "'>" + input_string + "</a>"
     
-    # Define the pattern to search for
-    pattern = r'(https://)(ld\.admin\.ch/.*)'
-
-    # Define the replacement string
-    replacement = r'\1flader.di.digisus-lab.ch/\2'
-
-    # Use re.sub to replace the matched pattern with the replacement
-    result = re.sub(pattern, replacement, input_string)
-
-    if result != input_string:
-        return "<a href='" + result + "?env=" + env + "'>" + input_string + "</a>"
+    pattern = r'^https://[^/]+\.ld\.admin\.ch'
+    
+    if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string):
+        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "'>" + input_string + "</a>"
     
     if input_string.startswith("http://") or input_string.startswith("https://"):
         return "<a href='" + input_string + "'>" + input_string + "</a>"
