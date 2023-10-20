@@ -80,17 +80,21 @@ def index():
 
 def linker(input_string, env):
 
+    # geo.ld.admin.ch and schema.ld.admin.ch are nor regularly dereferenced
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
         return "<a href='" + input_string + "'>" + input_string + "</a>"
     
+    # all URI starting with something.ld.admin.ch or ld.admin.ch should be dereference within flader
     pattern = r'^https://[^/]+\.ld\.admin\.ch'
     
     if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string):
         return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "'>" + input_string + "</a>"
     
+    # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
         return "<a href='" + input_string + "'>" + input_string + "</a>"
 
+    # if string literal
     return input_string
 
 
