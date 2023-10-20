@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>https://{{ subject }}</title>
+    <!-- Include any necessary CSS or Bootstrap styles here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <table class="table table-striped">
+        <tr>
+            <td>https://{{ subject }}</td>
+            <td>environment: {{ env }}</td>
+        </tr>
+        <tr>
+            <th>{{col_names[0]}}</th>
+            <th>{{col_names[1]}}</th>
+        </tr>
+        {% for index, row in data.iterrows() %}
+        <tr>
+            <td>{{ row.iloc[0] | safe }}</td>
+            <td>{{ row.iloc[1] | safe }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
