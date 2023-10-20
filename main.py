@@ -70,7 +70,7 @@ def index():
 
         col_names = df.columns.tolist()
 
-        return render_template('dataframe.html', data=df, subject=uri, env=env, col_names=col_names)
+        return render_template('dataframe.html', data=df, uri=uri, env=env, col_names=col_names)
 
     else:
         print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")

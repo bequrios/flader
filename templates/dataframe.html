@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <html>
+    <style>
+        .btn-group-margin {
+            margin: 10px;
+        }
+    </style>
 <head>
-    <title>https://{{ subject }}</title>
+    <title>{{ uri }}</title>
     <!-- Include any necessary CSS or Bootstrap styles here -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
+    <div class="btn-group btn-group-margin" role="group" aria-label="Basic example">
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod' }}">
+            <button type="button" class="btn btn-secondary {% if env == 'prod' %}active{% endif %}">PROD</button>
+        </a>
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int' }}">
+            <button type="button" class="btn btn-secondary {% if env == 'int' %}active{% endif %}">INT</button>
+        </a>
+        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test' }}">
+            <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
+        </a>
+    </div>
     <table class="table table-striped">
         <tr>
-            <td>{{ subject }}</td>
+            <td>{{ uri }}</td>
             <td>environment: {{ env }}</td>
         </tr>
         <tr>
