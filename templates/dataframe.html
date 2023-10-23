@@ -4,6 +4,10 @@
         .btn-group-margin {
             margin: 10px;
         }
+        #table-filter {
+                padding: 10px;
+                margin: 10px;
+            }
     </style>
 <head>
     <title>{{ uri }}</title>
@@ -31,8 +35,8 @@
             <button type="button" class="btn btn-secondary {% if dir == 'reverse' %}active{% endif %}">reverse</button>
         </a>
     </div>
-
-    <table class="table table-striped">
+    <input type="text" id="table-filter" placeholder="Filter">
+    <table id="result-table" class="table table-striped">
         <tr>
             <td>{{ uri }}</td>
             <td>environment: {{ env }}</td>
@@ -48,5 +52,31 @@
         </tr>
         {% endfor %}
     </table>
+    <script>
+        document.getElementById("table-filter").addEventListener("keyup", function() {
+            filterTable();
+        });
+    
+        function filterTable() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("table-filter");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("result-table");
+            tr = table.getElementsByTagName("tr");
+    
+            for (i = 0; i < tr.length; i++) {
+                var visible = false;
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        visible = true;
+                        break; // Exit the loop if a match is found in this row
+                    }
+                }
+                tr[i].style.display = visible ? "" : "none";
+            }
+        }
+    </script>
 </body>
 </html>
