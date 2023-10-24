@@ -7,36 +7,44 @@
         #table-filter {
                 padding: 10px;
                 margin: 10px;
-            }
+                margin-right: 20px;
+        }
+        #result-table {
+            margin: 10px;
+        }
     </style>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ uri }}</title>
     <!-- Include any necessary CSS or Bootstrap styles here -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-<body>
-    <div class="btn-group btn-group-margin" role="group" aria-label="env">
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod&dir=' + dir }}">
-            <button type="button" class="btn btn-secondary {% if env == 'prod' %}active{% endif %}">PROD</button>
-        </a>
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int&dir=' + dir }}">
-            <button type="button" class="btn btn-secondary {% if env == 'int' %}active{% endif %}">INT</button>
-        </a>
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test&dir=' + dir }}">
-            <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
-        </a>
-    </div>
+<body> 
+    <form>
+        <div class="btn-group btn-group-margin" role="group" aria-label="env">
+            <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod&dir=' + dir }}">
+                <button type="button" class="btn btn-secondary {% if env == 'prod' %}active{% endif %}">PROD</button>
+            </a>
+            <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int&dir=' + dir }}">
+                <button type="button" class="btn btn-secondary {% if env == 'int' %}active{% endif %}">INT</button>
+            </a>
+            <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test&dir=' + dir }}">
+                <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
+            </a>
+        </div>
 
-    <div class="btn-group btn-group-margin" role="group" aria-label="dir">
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&dir=nominal' }}">
-            <button type="button" class="btn btn-secondary {% if dir == 'nominal' %}active{% endif %}">nominal</button>
-        </a>
-        <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&dir=reverse' }}">
-            <button type="button" class="btn btn-secondary {% if dir == 'reverse' %}active{% endif %}">reverse</button>
-        </a>
-    </div>
-    <input type="text" id="table-filter" placeholder="Filter">
-    <table id="result-table" class="table table-striped">
+        <div class="btn-group btn-group-margin" role="group" aria-label="dir">
+            <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&dir=nominal' }}">
+                <button type="button" class="btn btn-secondary {% if dir == 'nominal' %}active{% endif %}">nominal</button>
+            </a>
+            <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&dir=reverse' }}">
+                <button type="button" class="btn btn-secondary {% if dir == 'reverse' %}active{% endif %}">reverse</button>
+            </a>
+        </div>
+        <input type="text" id="table-filter" placeholder="filter table rows" class="form-control">
+    </form>
+    <table id="result-table" class="table table-striped table-responsive">
         <tr>
             <td>{{ uri }}</td>
             <td>environment: {{ env }}</td>
@@ -64,7 +72,7 @@
             table = document.getElementById("result-table");
             tr = table.getElementsByTagName("tr");
     
-            for (i = 0; i < tr.length; i++) {
+            for (i = 2; i < tr.length; i++) {
                 var visible = false;
                 td = tr[i].getElementsByTagName("td");
                 for (j = 0; j < td.length; j++) {
