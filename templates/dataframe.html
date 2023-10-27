@@ -57,11 +57,13 @@
                     <tr>
                         <th>{{col_names[0]}}</th>
                         <th>{{col_names[1]}}</th>
+                        <th>{{col_names[2]}}</th>
                     </tr>
                     {% for index, row in data.iterrows() %}
                     <tr>
                         <td>{{ row.iloc[0] | safe }}</td>
                         <td>{{ row.iloc[1] | safe }}</td>
+                        <td>{{ row.iloc[2] | safe }}</td>
                     </tr>
                     {% endfor %}
                 </table>

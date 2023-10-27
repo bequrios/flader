@@ -21,8 +21,10 @@ def index():
 
         sparql_query = """
 
-        SELECT * WHERE {
-            ?subject ?predicate <""" + uri + """>.
+        SELECT ?subject ?predicate ?graph WHERE {
+            GRAPH ?graph {
+                ?subject ?predicate <""" + uri + """>.
+            }
         }
 
         """
@@ -32,8 +34,10 @@ def index():
 
         sparql_query = """
 
-        SELECT * WHERE {
-            <""" + uri + """> ?predicate ?object.
+        SELECT ?predicate ?object ?graph WHERE {
+            GRAPH ?graph {
+                <""" + uri + """> ?predicate ?object.
+            }
         }
 
         """
