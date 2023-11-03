@@ -78,8 +78,8 @@ def index():
             # for every column (variable)
             for var in vars:
                 
-                # if uri
-                if line[var]["type"] == "uri":
+                # if uri or blank node
+                if line[var]["type"] == "uri" or line[var]["type"] == "bnode":
                     url = modify_uri(line[var]["value"], env, dir)
                     line_list.append(url)
                 
@@ -131,6 +131,10 @@ def modify_uri(input_string, env, dir):
     # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
         return "<a href='" + input_string + "'>" + input_string + "</a>"
+    
+    # blank node
+    if input_string.startswith("genid"):
+        return "<a href='https://flader.di.digisus-lab.ch?uri=_:" + input_string + "&env=" + env + "&dir=" + dir + "'>" + input_string + "</a>"
 
     # if string literal
     return input_string
