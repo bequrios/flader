@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Markup, request
-import os
+import json
 import requests
 import pandas as pd
 import io
@@ -16,8 +16,6 @@ def index():
     dir = request.args.get("dir", "nominal")
     
     if dir == "reverse":
-
-        print("\n reverse \n")
 
         sparql_query = """
 
@@ -54,7 +52,7 @@ def index():
 
     headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        "Accept": "text/csv" 
+        "Accept": "application/json" 
     }
 
     response = requests.post(sparql_endpoint_url, 
@@ -64,17 +62,33 @@ def index():
     response.encoding = "utf-8"
 
     if response.status_code == 200:
-        df = pd.read_csv(io.StringIO(response.text))
         
-        # replace NA values by empty strings
-        df.fillna("", inplace = True) 
+        data = response.json()
 
-        df = df.map(lambda x: linker(x, env, dir))
+        vars = data["head"]["vars"]
+
+        df = pd.DataFrame(columns = vars)
+
+        for line in data["results"]["bindings"]:
+            line_list = []
+            for col in line:
+                if col["type"] == "uri":
+                    url = modify_uri(col["value"], env, dir)
+                    line_list.append(url)
+                
+                elif col["type"] == "literal":
+                    line_list.append(col["value"])
+
+                else:
+                    line_list.append(col["value"])
+
+            row_to_append = pd.DataFrame([line_list], columns = vars)
+
+            df = df.append(row_to_append, ignore_index=True)
+
         df = df.map(lambda x: Markup(x))
 
-        col_names = df.columns.tolist()
-
-        return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, col_names=col_names)
+        return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, col_names=vars)
 
     else:
         print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")
