@@ -11,6 +11,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     
+    # url parameter and their default values
     uri = request.args.get("uri", "https://ld.admin.ch/country/CHE")
     env = request.args.get("env", "prod")
     dir = request.args.get("dir", "nominal")
@@ -52,7 +53,7 @@ def index():
 
     headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        "Accept": "application/json" 
+        "Accept": "application/sparql-results+json" 
     }
 
     response = requests.post(sparql_endpoint_url, 
@@ -65,27 +66,47 @@ def index():
         
         data = response.json()
 
+        # the variables of the query result
         vars = data["head"]["vars"]
 
         df = pd.DataFrame(columns = vars)
 
+        # for each line in the result table
         for line in data["results"]["bindings"]:
             line_list = []
-            for col in line:
-                if col["type"] == "uri":
-                    url = modify_uri(col["value"], env, dir)
+            
+            # for every column (variable)
+            for var in vars:
+                
+                # if uri
+                if line[var]["type"] == "uri":
+                    url = modify_uri(line[var]["value"], env, dir)
                     line_list.append(url)
                 
-                elif col["type"] == "literal":
-                    line_list.append(col["value"])
+                # if string literal
+                elif line[var]["type"] == "literal":
+                    
+                    # if language tag present
+                    if "xml:lang" in line[var]:
+                        line_list.append(line[var]["value"] + " @" + line[var]["xml:lang"])
+                    
+                    # if datatype present
+                    elif "datatype" in line[var]:
+                        match = re.search(r'#(.*)', line[var]
+                        ["datatype"])
+                        datatype = "xsd:" + match.group(1)
+                        line_list.append(line[var]["value"] + " ^^" + datatype)
+                    else:
+                        line_list.append(line[var]["value"])
 
                 else:
-                    line_list.append(col["value"])
+                    line_list.append(line[var]["value"])
 
             row_to_append = pd.DataFrame([line_list], columns = vars)
 
-            df = df.append(row_to_append, ignore_index=True)
+            df = pd.concat([df, row_to_append], ignore_index=True)
 
+        # define all cells as markup so that the html code is properly displayed
         df = df.map(lambda x: Markup(x))
 
         return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, col_names=vars)
@@ -94,9 +115,8 @@ def index():
         print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")
         return render_template('template.html', uri=uri)
 
-    
-
-def linker(input_string, env, dir):
+# modifies the uris for correct linking (uri will be resolved with flader as long as possible)
+def modify_uri(input_string, env, dir):
 
     # geo.ld.admin.ch and schema.ld.admin.ch are nor regularly dereferenced
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
