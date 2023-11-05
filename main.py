@@ -88,14 +88,14 @@ def index():
                     
                     # if language tag present
                     if "xml:lang" in line[var]:
-                        line_list.append(line[var]["value"] + " @" + line[var]["xml:lang"])
+                        line_list.append(line[var]["value"] + ' <span class="text-muted">@' + line[var]["xml:lang"] + "</span>")
                     
                     # if datatype present
                     elif "datatype" in line[var]:
                         match = re.search(r'#(.*)', line[var]
                         ["datatype"])
                         datatype = "xsd:" + match.group(1)
-                        line_list.append(line[var]["value"] + " ^^" + datatype)
+                        line_list.append(line[var]["value"] + " <span class='text-muted'>^^" + datatype + "</span>")
                     else:
                         line_list.append(line[var]["value"])
 
