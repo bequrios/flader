@@ -130,7 +130,7 @@ def modify_uri(input_string, env, dir):
     
     # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
-        return "<a href='" + input_string + "'>" + input_string + "</a>"
+        return "<a href='" + input_string + "'>" + prefixer(input_string) + "</a>"
     
     # blank node
     if input_string.startswith("genid"):
@@ -138,6 +138,23 @@ def modify_uri(input_string, env, dir):
 
     # if string literal
     return input_string
+
+def prefixer(text):
+
+    prefixes = {
+        "http://schema.org/": "schema:",
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
+        "http://www.w3.org/ns/prov#": "prov:",
+        "http://www.w3.org/2004/02/skos/core#": "skos:"
+        "http://purl.org/dc/terms/": "dcterms:"
+    }
+
+    # Replace all occurrences of the keys with their corresponding values
+    for key, value in prefixes.items():
+        text = text.replace(key, value)
+    
+    return text
+
 
 
 if __name__ == "__main__":
