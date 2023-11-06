@@ -145,7 +145,7 @@ def prefixer(text):
         "http://schema.org/": "schema:",
         "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
         "http://www.w3.org/ns/prov#": "prov:",
-        "http://www.w3.org/2004/02/skos/core#": "skos:"
+        "http://www.w3.org/2004/02/skos/core#": "skos:",
         "http://purl.org/dc/terms/": "dcterms:"
     }
 
