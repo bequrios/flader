@@ -146,7 +146,13 @@ def prefixer(text):
         "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
         "http://www.w3.org/ns/prov#": "prov:",
         "http://www.w3.org/2004/02/skos/core#": "skos:",
-        "http://purl.org/dc/terms/": "dcterms:"
+        "http://purl.org/dc/terms/": "dcterms:",
+        "https://version.link/": "vl:",
+        "https://cube.link/": "cube:",
+        "http://www.w3.org/2002/07/owl#": "owl:",
+        "http://www.w3.org/ns/dcat#": "dcat:",
+        "http://rdfs.org/ns/void#": "void:",
+        "https://lindas.admin.ch/": "lindas:"
     }
 
     # Replace all occurrences of the keys with their corresponding values
