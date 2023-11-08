@@ -92,10 +92,9 @@ def index():
                     
                     # if datatype present
                     elif "datatype" in line[var]:
-                        match = re.search(r'#(.*)', line[var]
-                        ["datatype"])
-                        datatype = "xsd:" + match.group(1)
-                        line_list.append(line[var]["value"] + " <span class='text-muted'>^^" + datatype + "</span>")
+                        #match = re.search(r'#(.*)', line[var]["datatype"])
+                        #datatype = "xsd:" + match.group(1)
+                        line_list.append(line[var]["value"] + " <span class='text-muted'>" + prefixer(line[var]["datatype"]) + "</span>")
                     else:
                         line_list.append(line[var]["value"])
 
@@ -152,7 +151,8 @@ def prefixer(text):
         "http://www.w3.org/2002/07/owl#": "owl:",
         "http://www.w3.org/ns/dcat#": "dcat:",
         "http://rdfs.org/ns/void#": "void:",
-        "https://lindas.admin.ch/": "lindas:"
+        "https://lindas.admin.ch/": "lindas:",
+        "http://www.w3.org/2001/XMLSchema#": "xsd:"
     }
 
     # Replace all occurrences of the keys with their corresponding values
