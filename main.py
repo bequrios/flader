@@ -152,7 +152,8 @@ def prefixer(text):
         "http://www.w3.org/ns/dcat#": "dcat:",
         "http://rdfs.org/ns/void#": "void:",
         "https://lindas.admin.ch/": "lindas:",
-        "http://www.w3.org/2001/XMLSchema#": "xsd:"
+        "http://www.w3.org/2001/XMLSchema#": "xsd:",
+        "http://www.w3.org/2000/01/rdf-schema#": "rdfs:"
     }
 
     # Replace all occurrences of the keys with their corresponding values
