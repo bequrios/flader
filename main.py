@@ -95,8 +95,10 @@ def index():
                         #match = re.search(r'#(.*)', line[var]["datatype"])
                         #datatype = "xsd:" + match.group(1)
                         line_list.append(line[var]["value"] + " <span class='text-muted'>" + prefixer(line[var]["datatype"]) + "</span>")
-                    else:
-                        line_list.append(line[var]["value"])
+                    else: #könnte trotzdem ein URL sein, der aber vom Server als Literal geschickt wird
+                        #line_list.append(line[var]["value"])
+                        url = modify_uri(line[var]["value"], env, dir)
+                        line_list.append(url)
 
                 else:
                     line_list.append(line[var]["value"])
