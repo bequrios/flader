@@ -15,6 +15,7 @@ def index():
     uri = request.args.get("uri", "https://ld.admin.ch/country/CHE")
     env = request.args.get("env", "prod")
     dir = request.args.get("dir", "nominal")
+    limit = request.args.get("limit", "0")
     
     if dir == "reverse":
 
@@ -40,6 +41,9 @@ def index():
         }
 
         """
+
+    if limit != "0":
+        sparql_query = sparql_query + "LIMIT " + limit
 
     encoded_query = {"query": sparql_query}
 
@@ -80,7 +84,7 @@ def index():
                 
                 # if uri or blank node
                 if line[var]["type"] == "uri" or line[var]["type"] == "bnode":
-                    url = modify_uri(line[var]["value"], env, dir)
+                    url = modify_uri(line[var]["value"], env, dir, limit)
                     line_list.append(url)
                 
                 # if string literal
@@ -97,7 +101,7 @@ def index():
                         line_list.append(line[var]["value"] + " <span class='text-muted'>" + prefixer(line[var]["datatype"]) + "</span>")
                     else: #könnte trotzdem ein URL sein, der aber vom Server als Literal geschickt wird
                         #line_list.append(line[var]["value"])
-                        url = modify_uri(line[var]["value"], env, dir)
+                        url = modify_uri(line[var]["value"], env, dir, limit)
                         line_list.append(url)
 
                 else:
@@ -110,14 +114,14 @@ def index():
         # define all cells as markup so that the html code is properly displayed
         df = df.map(lambda x: Markup(x))
 
-        return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, col_names=vars)
+        return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, limit=limit, col_names=vars)
 
     else:
         print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")
         return render_template('template.html', uri=uri)
 
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
-def modify_uri(input_string, env, dir):
+def modify_uri(input_string, env, dir, limit):
 
     # geo.ld.admin.ch and schema.ld.admin.ch are nor regularly dereferenced
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
@@ -127,7 +131,7 @@ def modify_uri(input_string, env, dir):
     pattern = r'^https://[^/]+\.ld\.admin\.ch'
     
     if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string):
-        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&dir=" + dir + "'>" + input_string + "</a>"
+        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&dir=" + dir + "&limit=" + limit + "'>" + input_string + "</a>"
     
     # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
@@ -135,7 +139,7 @@ def modify_uri(input_string, env, dir):
     
     # blank node
     if input_string.startswith("genid"):
-        return "<a href='https://flader.di.digisus-lab.ch?uri=_:" + input_string + "&env=" + env + "&dir=" + dir + "'>" + input_string + "</a>"
+        return "<a href='https://flader.di.digisus-lab.ch?uri=_:" + input_string + "&env=" + env + "&dir=" + dir + "&limit=" + limit + "'>" + input_string + "</a>"
 
     # if string literal
     return input_string
@@ -163,8 +167,6 @@ def prefixer(text):
         text = text.replace(key, value)
     
     return text
-
-
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8081)
