@@ -60,23 +60,31 @@ def index():
         "Accept": "application/sparql-results+json" 
     }
 
-    response = requests.post(sparql_endpoint_url, 
+    response1 = requests.post(sparql_endpoint_url, 
                              data=encoded_query, 
                              headers=headers)
     
-    response.encoding = "utf-8"
+    response2 = requests.post("http://graphdb.di.digisus-lab.ch/repositories/flader",
+                             data=encoded_query,
+                             headers=headers)
+    
+    response1.encoding = "utf-8"
+    response2.encoding = "utf-8"
 
-    if response.status_code == 200:
+    if response1.status_code == 200 and response2.status_code == 200:
         
-        data = response.json()
+        data1 = response1.json()
+        data2 = response2.json()
 
         # the variables of the query result
-        vars = data["head"]["vars"]
+        vars = data1["head"]["vars"]
 
         df = pd.DataFrame(columns = vars)
 
+        data = data1["results"]["bindings"] + data2["results"]["bindings"]
+
         # for each line in the result table
-        for line in data["results"]["bindings"]:
+        for line in data:
             line_list = []
             
             # for every column (variable)
@@ -117,7 +125,7 @@ def index():
         return render_template('dataframe.html', data=df, uri=uri, env=env, dir=dir, limit=limit, col_names=vars)
 
     else:
-        print(f"SPARQL query failed with status code: {response.status_code} and response text: {response.text}!")
+        print(f"SPARQL query failed with status code: {response1.status_code} and response text: {response1.text}!")
         return render_template('template.html', uri=uri)
 
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
