@@ -21,31 +21,40 @@
 <body>
     <div class="container">
                 <div class="btn-group btn-group-margin" role="group" aria-label="env">
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod&dir=' + dir + '&limit=' + limit }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod' + '&ext=' + ext + '&dir=' + dir + '&limit=' + limit }}">
                         <button type="button" class="btn btn-secondary {% if env == 'prod' %}active{% endif %}">PROD</button>
                     </a>
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int&dir=' + dir + '&limit=' + limit }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int' + '&ext=' + ext + '&dir=' + dir + '&limit=' + limit }}">
                         <button type="button" class="btn btn-secondary {% if env == 'int' %}active{% endif %}">INT</button>
                     </a>
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test&dir=' + dir + '&limit=' + limit }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test' + '&ext=' + ext + '&dir=' + dir + '&limit=' + limit }}">
                         <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
                     </a>
                 </div>
 
+                <div class="btn-group btn-group-margin" role="group" aria-label="ext">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&ext=true' +'&dir=' + dir + '&limit=' + limit }}">
+                        <button type="button" class="btn btn-secondary {% if ext == 'true' %}active{% endif %}">ext on</button>
+                    </a>
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&ext=false'+ '&dir' + dir + '&limit=' + limit }}">
+                        <button type="button" class="btn btn-secondary {% if ext == 'false' %}active{% endif %}">ext off</button>
+                    </a>
+                </div>
+
                 <div class="btn-group btn-group-margin" role="group" aria-label="dir">
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&dir=nominal' + '&limit=' + limit }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext +'&dir=nominal' + '&limit=' + limit }}">
                         <button type="button" class="btn btn-secondary {% if dir == 'nominal' %}active{% endif %}">nominal</button>
                     </a>
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&dir=reverse' + '&limit=' + limit }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext + '&dir=reverse' + '&limit=' + limit }}">
                         <button type="button" class="btn btn-secondary {% if dir == 'reverse' %}active{% endif %}">reverse</button>
                     </a>
                 </div>
 
                 <div class="btn-group btn-group-margin" role="group" aria-label="limit">
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&dir=' + dir +'&limit=0' }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext +'&dir=' + dir +'&limit=0' }}">
                         <button type="button" class="btn btn-secondary {% if limit == '0' %}active{% endif %}">unlimited</button>
                     </a>
-                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&dir=' + dir +'&limit=100' }}">
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext + '&dir=' + dir +'&limit=100' }}">
                         <button type="button" class="btn btn-secondary {% if limit != '0' %}active{% endif %}">limit 100</button>
                     </a>
                 </div>
