@@ -160,7 +160,7 @@ def modify_uri(input_string, env, ext, dir, limit):
     pattern = r'^https://[^/]+\.ld\.admin\.ch'
     
     if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string) or input_string.startswith("https://example.com"):
-        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&limit=" + limit + "'>" + input_string + "</a>"
+        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&limit=" + limit + "'>" + prefixer(input_string) + "</a>"
     
     # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
