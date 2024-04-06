@@ -146,7 +146,7 @@ def index():
         return render_template('dataframe.html', data=df, uri=uri, env=env, ext=ext, dir=dir, limit=limit, col_names=vars)
 
     else:
-        print(f"status code lindas: {response_lindas.status_code} and response text lindas: {response_lindas.text}, status code ext: {response_ext.status_code} and response text ext: {resonse_ext.text}!")
+        print(f"status code lindas: {response_lindas.status_code} and response text lindas: {response_lindas.text}, status code ext: {response_ext.status_code} and response text ext: {response_ext.text}!")
         return render_template('template.html', uri=uri)
 
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
