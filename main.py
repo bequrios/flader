@@ -152,14 +152,14 @@ def index():
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
 def modify_uri(input_string, env, ext, dir, limit):
 
-    # geo.ld.admin.ch and schema.ld.admin.ch are nor regularly dereferenced
+    # geo.ld.admin.ch and schema.ld.admin.ch are not regularly dereferenced
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
         return "<a href='" + input_string + "'>" + input_string + "</a>"
     
-    # all URI starting with something.ld.admin.ch or ld.admin.ch should be dereference within flader
+    # all URI starting with something.ld.admin.ch or ld.admin.ch or example.com should be dereferenced within flader
     pattern = r'^https://[^/]+\.ld\.admin\.ch'
     
-    if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string):
+    if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string) or input_string.startswith("https://example.com"):
         return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&limit=" + limit + "'>" + input_string + "</a>"
     
     # external URI
@@ -188,7 +188,8 @@ def prefixer(text):
         "http://rdfs.org/ns/void#": "void:",
         "https://lindas.admin.ch/": "lindas:",
         "http://www.w3.org/2001/XMLSchema#": "xsd:",
-        "http://www.w3.org/2000/01/rdf-schema#": "rdfs:"
+        "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
+        "https://example.com/": ":"
     }
 
     # Replace all occurrences of the keys with their corresponding values
