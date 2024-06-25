@@ -1,12 +1,9 @@
 from flask import Flask, render_template, Markup, request
-import json
 import requests
 import pandas as pd
-import io
 import re
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def index():
@@ -16,7 +13,7 @@ def index():
     env = request.args.get("env", "prod")
     ext = request.args.get("ext", "false")
     dir = request.args.get("dir", "nominal")
-    limit = request.args.get("limit", "0")
+    lim = request.args.get("lim", "0")
     
     if dir == "reverse":
 
@@ -43,8 +40,8 @@ def index():
 
         """
 
-    if limit != "0":
-        sparql_query = sparql_query + "LIMIT " + limit
+    if lim != "0":
+        sparql_query = sparql_query + "LIMIT " + lim
 
     encoded_query = {"query": sparql_query}
 
@@ -113,7 +110,7 @@ def index():
                 
                 # if uri or blank node
                 if line[var]["type"] == "uri" or line[var]["type"] == "bnode":
-                    url = modify_uri(line[var]["value"], env, ext, dir, limit)
+                    url = modify_uri(line[var]["value"], env, ext, dir, lim)
                     line_list.append(url)
                 
                 # if string literal
@@ -130,7 +127,7 @@ def index():
                         line_list.append(line[var]["value"] + " <span class='text-muted'>" + prefixer(line[var]["datatype"]) + "</span>")
                     else: #könnte trotzdem ein URL sein, der aber vom Server als Literal geschickt wird
                         #line_list.append(line[var]["value"])
-                        url = modify_uri(line[var]["value"], env, ext, dir, limit)
+                        url = modify_uri(line[var]["value"], env, ext, dir, lim)
                         line_list.append(url)
 
                 else:
@@ -143,7 +140,7 @@ def index():
         # define all cells as markup so that the html code is properly displayed
         df = df.map(lambda x: Markup(x))
 
-        return render_template('dataframe.html', data=df, uri=uri, env=env, ext=ext, dir=dir, limit=limit, col_names=vars)
+        return render_template('dataframe.html', data=df, uri=uri, env=env, ext=ext, dir=dir, lim=lim, col_names=vars)
 
     else:
         if ext == "true":
@@ -156,7 +153,7 @@ def index():
 
 
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
-def modify_uri(input_string, env, ext, dir, limit):
+def modify_uri(input_string, env, ext, dir, lim):
 
     # geo.ld.admin.ch and schema.ld.admin.ch are not regularly dereferenced
     if input_string.startswith("https://geo.ld.admin.ch") or input_string.startswith("https://schema.ld.admin.ch"):
@@ -166,7 +163,7 @@ def modify_uri(input_string, env, ext, dir, limit):
     pattern = r'^https://[^/]+\.ld\.admin\.ch'
     
     if input_string.startswith("https://ld.admin.ch") or re.match(pattern, input_string) or input_string.startswith("https://example.com"):
-        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&limit=" + limit + "'>" + prefixer(input_string) + "</a>"
+        return "<a href='https://flader.di.digisus-lab.ch?uri=" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&lim=" + lim + "'>" + prefixer(input_string) + "</a>"
     
     # external URI
     if input_string.startswith("http://") or input_string.startswith("https://"):
@@ -174,7 +171,7 @@ def modify_uri(input_string, env, ext, dir, limit):
     
     # blank node
     if input_string.startswith("genid"):
-        return "<a href='https://flader.di.digisus-lab.ch?uri=_:" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&limit=" + limit + "'>" + input_string + "</a>"
+        return "<a href='https://flader.di.digisus-lab.ch?uri=_:" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&lim=" + lim + "'>" + input_string + "</a>"
 
     # if string literal
     return input_string
