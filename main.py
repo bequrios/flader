@@ -170,7 +170,7 @@ def modify_uri(input_string, env, ext, dir, lim):
         return "<a href='" + input_string + "'>" + prefixer(input_string) + "</a>"
     
     # blank node
-    if input_string.startswith("genid"):
+    if input_string.startswith("genid") or input_string.startswith("anon-genid"):
         return "<a href='https://flader.di.digisus-lab.ch?uri=_:" + input_string + "&env=" + env + "&ext=" + ext + "&dir=" + dir + "&lim=" + lim + "'>" + input_string + "</a>"
 
     # if string literal
