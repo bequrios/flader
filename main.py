@@ -152,6 +152,150 @@ def index():
             return render_template('template.html', uri=uri)
 
 
+@app.route('/cyto')
+def cyto():
+
+    def path(query_string, address):
+
+        # Define the headers for the request
+        headers = {
+            'Accept': 'application/sparql-results+json',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        }
+        
+        # URL-encode the query parameters
+        payload = {'query': query_string}
+        
+        # Send the request to the SPARQL endpoint
+        response = requests.post(address, data=payload, headers=headers)
+
+        # Ensure the response uses UTF-8 encoding
+        response.encoding = 'utf-8'
+        
+        # Raise an exception if the request was not successful
+        response.raise_for_status()
+
+        # Parse the JSON response
+        results = response.json()
+
+        return results
+    
+    def color_map(code):
+        if code == "29-26":
+            return "blue"
+        elif code == "26-26":
+            return "green"
+        elif code == "29-21" or code == "26-21":
+            return "orange"
+        else:
+            return "grey"
+        
+    res = path("""
+
+    PREFIX schema: <http://schema.org/>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX ech: <https://ld.admin.ch/ech/71/>
+
+    PATHS 
+    START ?x = <https://ld.admin.ch/municipality/version/14062> #Berg (TG)
+    #START ?x = <https://ld.admin.ch/municipality/version/13445> #Rubigen
+    #START ?x = <https://ld.admin.ch/municipality/version/14091> #Eschlikon
+    #START ?x = <https://ld.admin.ch/municipality/version/12612> #Lavertezzo
+    END ?y 
+
+    VIA {
+
+        ?x ?p ?y.
+        
+        ?x schema:name ?xName;
+            prov:hadPrimarySource ?xECH;
+            schema:validFrom ?xAdDate.
+        ?y schema:name ?yName;
+            prov:hadPrimarySource ?yECH;
+            schema:validFrom ?yAdDate.
+            
+        OPTIONAL {?x schema:validThrough ?xAbDate.}
+        OPTIONAL {?y schema:validThrough ?yAbDate.}
+            
+        OPTIONAL {?xECH ech:municipalityAbolitionModeId ?xECHAbId.}
+        OPTIONAL {?xECH ech:municipalityAdmissionModeId ?xECHAdId.}
+            
+        OPTIONAL {?yECH ech:municipalityAbolitionModeId ?yECHAbId.}
+        OPTIONAL {?yECH ech:municipalityAdmissionModeId ?yECHAdId.}
+        
+        FILTER(?p = <https://version.link/successor> || ?p = <https://version.link/predecessor>)
+
+    }
+
+    """, "https://ld.admin.ch/query")
+
+    results = []
+
+    for entry in res["results"]["bindings"]:
+        if "x" in entry:
+            if entry["p"]["value"] == "https://version.link/successor":
+                results.append(
+                    {
+                        "source": entry["x"]["value"], 
+                        "sourceName": entry["xName"]["value"],
+                        "abolitionDate": entry["xAbDate"]["value"],
+                        "abolitionId": entry["xECHAbId"]["value"],
+                        "admissionId": entry["yECHAdId"]["value"],
+                        "admissionDate": entry["yAdDate"]["value"],
+                        "targetName": entry["yName"]["value"],
+                        "target": entry["y"]["value"]
+                    }
+                )
+            else:
+                results.append(
+                    {
+                        "source": entry["y"]["value"], 
+                        "sourceName": entry["yName"]["value"],
+                        "abolitionDate": entry["yAbDate"]["value"],
+                        "abolitionId": entry["yECHAbId"]["value"],
+                        "admissionId": entry["xECHAdId"]["value"],
+                        "admissionDate": entry["xAdDate"]["value"],
+                        "targetName": entry["xName"]["value"],
+                        "target": entry["x"]["value"]
+                    }
+                )
+                
+    df = pd.DataFrame(results).drop_duplicates()
+
+    df["abolitionDate"] = pd.to_datetime(df["abolitionDate"])
+    df["admissionDate"] = pd.to_datetime(df["admissionDate"])
+    df["changeMode"] = df["abolitionId"] + "-" + df["admissionId"] #Kombination aus AbolitionMode und AdmissionMode
+    df["color"] = df["changeMode"].map(color_map) #erstellen einer neuen Spalte für die Farben der Pfeile beruhend auf dem changeMode
+                
+    df.sort_values("admissionDate", inplace=True)
+
+    # Build unique nodes set
+    nodes = {}
+    for _, row in df.iterrows():
+        nodes[row['source']] = {"id": row['source'], "label": row['sourceName']}
+        nodes[row['target']] = {"id": row['target'], "label": row['targetName']}
+
+    # Build edges
+    edges = []
+    for _, row in df.iterrows():
+        edges.append({
+            "data": {
+                "source": row["source"],
+                "target": row["target"],
+                "color": row["color"]
+            }
+        })
+
+    # Format as graph_data JSON
+    graph_data = {
+        "nodes": [{"data": node} for node in nodes.values()],
+        "edges": edges
+    }
+    
+    # Pass the data to the template
+    return render_template('cyto.html', graph_data=graph_data)
+
+
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
 def modify_uri(input_string, env, ext, dir, lim):
 
