@@ -22,6 +22,19 @@
         // Inject Flask data into JavaScript
         const graphData = {{ graph_data | tojson }};
 
+        function getNodeDimensions(label) {
+            const padding = 20; // padding around the label
+            const width = label.length * 10 + padding; // width based on label length
+            const height = 40; // fixed height
+            return { width, height };
+        }
+
+        graphData.nodes.forEach(node => {
+            const { width, height } = getNodeDimensions(node.data.label);
+            node.data.width = width;
+            node.data.height = height;
+        });
+
         // Initialize Cytoscape
         const cy = cytoscape({
             container: document.getElementById('cy'),
@@ -34,8 +47,18 @@
                 {
                     selector: 'node',
                     style: {
-                        'label': 'data(label)',
-                        'background-color': '#0074D9'
+                        'label': 'data(label)',         // display the label on the node
+                        'background-color': '#ffffff',  // white background color
+                        'border-color': '#cccccc',      // grey outline color
+                        'border-width': 2,              // thickness of the outline
+                        'width': 'data(width)', // dynamic width
+                        'color': '#000000',             // black font color
+                        'text-valign': 'center',        // vertical alignment of text
+                        'text-halign': 'center',        // horizontal alignment of text
+                        'shape': 'roundrectangle',      // rounded rectangle shape
+                        'font-size': '20px',            // larger font size for labels
+                        'padding': '10px',              // optional padding for spacing
+                        'border-radius': '10px'         // rounded edges for the node shape
                     }
                 },
                 {
