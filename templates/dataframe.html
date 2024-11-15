@@ -30,14 +30,17 @@
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test' + '&ext=' + ext + '&dir=' + dir + '&lim=' + lim }}">
                         <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
                     </a>
+                    <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=off' + '&ext=' + ext + '&dir=' + dir + '&lim=' + lim }}">
+                        <button type="button" class="btn btn-secondary {% if env == 'off' %}active{% endif %}">off</button>
+                    </a>
                 </div>
 
                 <div class="btn-group btn-group-margin" role="group" aria-label="ext">
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&ext=true' +'&dir=' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if ext == 'true' %}active{% endif %}">ext on</button>
+                        <button type="button" class="btn btn-secondary {% if ext == 'true' %}active{% endif %}">ext</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&ext=false'+ '&dir' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if ext == 'false' %}active{% endif %}">ext off</button>
+                        <button type="button" class="btn btn-secondary {% if ext == 'false' %}active{% endif %}">off</button>
                     </a>
                 </div>
 

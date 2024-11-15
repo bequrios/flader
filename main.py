@@ -16,28 +16,21 @@ def index():
     lim = request.args.get("lim", "0")
     
     if dir == "reverse":
-
         sparql_query = """
-
         SELECT ?subject ?predicate ?graph WHERE {
             GRAPH ?graph {
                 ?subject ?predicate <""" + uri + """>.
             }
         }
-
         """
-
     else:
         dir = "nominal"
-
         sparql_query = """
-
         SELECT ?predicate ?object ?graph WHERE {
             GRAPH ?graph {
                 <""" + uri + """> ?predicate ?object.
             }
         }
-
         """
 
     if lim != "0":
@@ -49,57 +42,56 @@ def index():
         lindas_enpoint_url = "https://test.ld.admin.ch/query"
     elif env == "int":
         lindas_enpoint_url = "https://int.ld.admin.ch/query"
-    else:
-        env = "prod"
+    elif env == "prod":
         lindas_enpoint_url = "https://ld.admin.ch/query"
+    else:
+        env == "off"
 
     headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         "Accept": "application/sparql-results+json" 
     }
 
-    status = "nok"
+    status_lindas = "ok"
+    status_ext = "ok"
 
-    response_lindas = requests.post(lindas_enpoint_url, 
+    # empty result dictionary
+    data = []
+
+    # empty variable list
+    vars = []
+
+    # if LINDAS is not set to "off"
+    if env != "off":
+        response_lindas = requests.post(lindas_enpoint_url, 
                              data=encoded_query, 
                              headers=headers)
     
-
-    if response_lindas.status_code == 200:
-
-        response_lindas.encoding = "utf-8"
-
-        data_lindas = response_lindas.json()
-
-        # the variables of the query result
-        vars = data_lindas["head"]["vars"]
-
-        df = pd.DataFrame(columns = vars)
-
-        data = data_lindas["results"]["bindings"]
-
-        status = "ok"
+        if response_lindas.status_code == 200:
+            response_lindas.encoding = "utf-8"
+            data_lindas = response_lindas.json()
+            # the variables of the query result
+            vars = data_lindas["head"]["vars"]
+            data = data + data_lindas["results"]["bindings"]
+        else:
+            status_lindas = "nok"
 
     if ext == "true":
-
         response_ext = requests.post("http://graphdb.di.digisus-lab.ch/repositories/flader",
                              data=encoded_query,
                              headers=headers)
         
         if response_ext.status_code == 200:
-
             response_ext.encoding = "utf-8"
-
             data_ext = response_ext.json()
-
+            vars = data_ext["head"]["vars"]
             data = data + data_ext["results"]["bindings"]
-
-            status = "ok"
-
         else:
-            status = "nok"
+            status_ext = "nok"
 
-    if status == "ok":
+    if (status_lindas == "ok" or status_ext == "ok"):
+        
+        lines = []
         
         # for each line in the result table
         for line in data:
@@ -107,7 +99,6 @@ def index():
             
             # for every column (variable)
             for var in vars:
-                
                 # if uri or blank node
                 if line[var]["type"] == "uri" or line[var]["type"] == "bnode":
                     url = modify_uri(line[var]["value"], env, ext, dir, lim)
@@ -133,9 +124,9 @@ def index():
                 else:
                     line_list.append(line[var]["value"])
 
-            row_to_append = pd.DataFrame([line_list], columns = vars)
+            lines.append(line_list)
 
-            df = pd.concat([df, row_to_append], ignore_index=True)
+        df = pd.DataFrame(lines, columns = vars)
 
         # define all cells as markup so that the html code is properly displayed
         df = df.map(lambda x: Markup(x))
