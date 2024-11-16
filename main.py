@@ -89,7 +89,7 @@ def index():
         else:
             status_ext = "nok"
 
-    if (status_lindas == "ok" or status_ext == "ok"):
+    if (status_lindas == "ok" and status_ext == "ok"):
         
         lines = []
         
@@ -134,13 +134,15 @@ def index():
         return render_template('dataframe.html', data=df, uri=uri, env=env, ext=ext, dir=dir, lim=lim, col_names=vars)
 
     else:
-        if ext == "true":
-            print(f"status code lindas: {response_lindas.status_code} and response text lindas: {response_lindas.text}, status code ext: {response_ext.status_code} and response text ext: {response_ext.text}!")
-            return render_template('template.html', uri=uri)
-        
-        else:
-            print(f"status code lindas: {response_lindas.status_code} and response text lindas: {response_lindas.text}!")
-            return render_template('template.html', uri=uri)
+        error_message = ""
+
+        if status_lindas == "nok":
+            error_message += f"status code lindas: {response_lindas.status_code} and response text lindas: {response_lindas.text}! "
+
+        if status_ext == "nok":
+            error_message += f"status code ext: {response_ext.status_code} and response text ext: {response_ext.text}!"
+    
+        return render_template('error.html', error=error_message)
 
 
 @app.route('/cyto')
@@ -327,7 +329,8 @@ def prefixer(text):
         "https://lindas.admin.ch/": "lindas:",
         "http://www.w3.org/2001/XMLSchema#": "xsd:",
         "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
-        "https://example.com/": ":"
+        "https://example.com/": ":",
+        "https://flader.di.digisus-lab.ch/": "flader:"
     }
 
     # Replace all occurrences of the keys with their corresponding values

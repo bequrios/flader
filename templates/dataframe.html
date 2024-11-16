@@ -22,43 +22,43 @@
     <div class="container">
                 <div class="btn-group btn-group-margin" role="group" aria-label="env">
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=prod' + '&ext=' + ext + '&dir=' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if env == 'prod' %}active{% endif %}">PROD</button>
+                        <button type="button" class="{% if env == 'prod' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">PROD</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=int' + '&ext=' + ext + '&dir=' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if env == 'int' %}active{% endif %}">INT</button>
+                        <button type="button" class="{% if env == 'int' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">INT</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=test' + '&ext=' + ext + '&dir=' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if env == 'test' %}active{% endif %}">TEST</button>
+                        <button type="button" class="{% if env == 'test' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">TEST</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=off' + '&ext=' + ext + '&dir=' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if env == 'off' %}active{% endif %}">off</button>
+                        <button type="button" class="{% if env == 'off' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">off</button>
                     </a>
                 </div>
 
                 <div class="btn-group btn-group-margin" role="group" aria-label="ext">
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&ext=true' +'&dir=' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if ext == 'true' %}active{% endif %}">ext</button>
+                        <button type="button" class="{% if ext == 'true' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">ext</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env +'&ext=false'+ '&dir' + dir + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if ext == 'false' %}active{% endif %}">off</button>
+                        <button type="button" class="{% if ext == 'false' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">off</button>
                     </a>
                 </div>
 
                 <div class="btn-group btn-group-margin" role="group" aria-label="dir">
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext +'&dir=nominal' + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if dir == 'nominal' %}active{% endif %}">nominal</button>
+                        <button type="button" class="{% if dir == 'nominal' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">nominal</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext + '&dir=reverse' + '&lim=' + lim }}">
-                        <button type="button" class="btn btn-secondary {% if dir == 'reverse' %}active{% endif %}">reverse</button>
+                        <button type="button" class="{% if dir == 'reverse' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">reverse</button>
                     </a>
                 </div>
 
                 <div class="btn-group btn-group-margin" role="group" aria-label="lim">
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext +'&dir=' + dir +'&lim=0' }}">
-                        <button type="button" class="btn btn-secondary {% if lim == '0' %}active{% endif %}">unlimited</button>
+                        <button type="button" class="{% if lim == '0' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">unlimited</button>
                     </a>
                     <a href="{{ 'https://flader.di.digisus-lab.ch/?uri=' + uri + '&env=' + env + '&ext=' + ext + '&dir=' + dir +'&lim=100' }}">
-                        <button type="button" class="btn btn-secondary {% if lim != '0' %}active{% endif %}">limit 100</button>
+                        <button type="button" class="{% if lim != '0' %}btn btn-secondary{% else %}btn btn-outline-secondary{% endif %}">limit 100</button>
                     </a>
                 </div>
 
