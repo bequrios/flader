@@ -347,7 +347,10 @@ def get_classes(uri, endpoint):
 
     sparql_query = """
         SELECT ?class WHERE {
-            <""" + uri + """> a ?class.
+            <""" + uri + """> a ?class;
+             <https://version.link/identity> ?identity.
+        
+            ?identity a <https://schema.ld.admin.ch/PoliticalMunicipality>.
         }
         """
     
