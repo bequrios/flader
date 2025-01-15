@@ -14,6 +14,8 @@ def index():
     ext = request.args.get("ext", "false")
     dir = request.args.get("dir", "nominal")
     lim = request.args.get("lim", "0")
+
+    graph_data = None
     
     if dir == "reverse":
         sparql_query = """
@@ -76,6 +78,13 @@ def index():
         else:
             status_lindas = "nok"
 
+        classes = get_classes(uri, lindas_enpoint_url)
+
+        vl_version = 'https://version.link/Version' in classes
+        
+        if vl_version:
+            graph_data = cyto(uri, lindas_enpoint_url)
+
     if ext == "true":
         response_ext = requests.post("http://graphdb.di.digisus-lab.ch/repositories/flader",
                              data=encoded_query,
@@ -131,7 +140,7 @@ def index():
         # define all cells as markup so that the html code is properly displayed
         df = df.map(lambda x: Markup(x))
 
-        return render_template('dataframe.html', data=df, uri=uri, env=env, ext=ext, dir=dir, lim=lim, col_names=vars)
+        return render_template('dataframe.html', data=df, uri=uri, env=env, ext=ext, dir=dir, lim=lim, col_names=vars, graph_data=graph_data)
 
     else:
         error_message = ""
@@ -144,11 +153,9 @@ def index():
     
         return render_template('error.html', error=error_message)
 
+def cyto(uri, endpoint):
 
-@app.route('/cyto')
-def cyto():
-
-    def path(query_string, address):
+    def path(query_string, endpoint):
 
         # Define the headers for the request
         headers = {
@@ -160,7 +167,7 @@ def cyto():
         payload = {'query': query_string}
         
         # Send the request to the SPARQL endpoint
-        response = requests.post(address, data=payload, headers=headers)
+        response = requests.post(endpoint, data=payload, headers=headers)
 
         # Ensure the response uses UTF-8 encoding
         response.encoding = 'utf-8'
@@ -190,10 +197,7 @@ def cyto():
     PREFIX ech: <https://ld.admin.ch/ech/71/>
 
     PATHS 
-    START ?x = <https://ld.admin.ch/municipality/version/14062> #Berg (TG)
-    #START ?x = <https://ld.admin.ch/municipality/version/13445> #Rubigen
-    #START ?x = <https://ld.admin.ch/municipality/version/14091> #Eschlikon
-    #START ?x = <https://ld.admin.ch/municipality/version/12612> #Lavertezzo
+    START ?x = <""" + uri + """>
     END ?y 
 
     VIA {
@@ -220,7 +224,7 @@ def cyto():
 
     }
 
-    """, "https://ld.admin.ch/query")
+    """, endpoint)
 
     results = []
 
@@ -286,7 +290,7 @@ def cyto():
     }
     
     # Pass the data to the template
-    return render_template('cyto.html', graph_data=graph_data)
+    return graph_data
 
 
 # modifies the uris for correct linking (uri will be resolved with flader as long as possible)
@@ -338,6 +342,36 @@ def prefixer(text):
         text = text.replace(key, value)
     
     return text
+
+def get_classes(uri, endpoint):
+
+    sparql_query = """
+        SELECT ?class WHERE {
+            <""" + uri + """> a ?class.
+        }
+        """
+    
+    encoded_query = {"query": sparql_query}
+
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        "Accept": "application/sparql-results+json" 
+    }
+
+    response = requests.post(endpoint, 
+                             data=encoded_query, 
+                             headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        data = data["results"]["bindings"]
+
+        classes = []
+
+        for value in data:
+            classes.append(value["class"]["value"])
+
+    return classes
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8081)
