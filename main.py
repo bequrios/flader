@@ -334,7 +334,9 @@ def prefixer(text):
         "http://www.w3.org/2001/XMLSchema#": "xsd:",
         "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
         "https://example.com/": ":",
-        "https://flader.di.digisus-lab.ch/": "flader:"
+        "https://flader.di.digisus-lab.ch/": "flader:",
+        "https://paf.link/": "paf:",
+        "https://ch.paf.link/": "chpaf:"
     }
 
     # Replace all occurrences of the keys with their corresponding values
