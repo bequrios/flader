@@ -78,12 +78,12 @@ def index():
         else:
             status_lindas = "nok"
 
-        classes = get_classes(uri, lindas_enpoint_url)
+        #classes = get_classes(uri, lindas_enpoint_url)
 
-        vl_version = 'https://version.link/Version' in classes
+        #vl_version = 'https://version.link/Version' in classes
         
-        if vl_version:
-            graph_data = cyto(uri, lindas_enpoint_url)
+        #if vl_version:
+        #    graph_data = cyto(uri, lindas_enpoint_url)
 
     if ext == "true":
         response_ext = requests.post("http://graphdb.di.digisus-lab.ch/repositories/flader",
